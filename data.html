@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konversi CSV ke JSON</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .drag-area {
+            border: 2px dashed #3b82f6;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .drag-area.active {
+            border: 2px solid #3b82f6;
+            background-color: #eff6ff;
+        }
+        #csv-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        #csv-table th, #csv-table td {
+            border: 1px solid #e5e7eb;
+            padding: 0.5rem;
+        }
+        #csv-table th {
+            background-color: #f9fafb;
+        }
+        #csv-table tr:nth-child(even) {
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center mb-8 text-blue-700">Konverter CSV ke JSON</h1>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 max-w-4xl mx-auto mb-8">
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold mb-3 text-gray-800">Unggah File CSV</h2>
+                <div class="drag-area" id="drag-area">
+                    <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                    <p class="text-gray-600 mb-4">Seret dan lepas file CSV di sini atau</p>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300">
+                        Pilih File
+                    </button>
+                    <input type="file" id="csv-file" accept=".csv" class="hidden">
+                    <p class="text-gray-600 text-xs mt-4">File harus berformat CSV dengan kolom yang sesuai</p>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold mb-3 text-gray-800">Pemetaan Kolom</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="no-registration">
+                            No Registration (Kolom A)
+                        </label>
+                        <input type="text" id="no-registration" value="noRegistration" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="no-participant">
+                            No Participant (Kolom B)
+                        </label>
+                        <input type="text" id="no-participant" value="noParticipant" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="leader-name">
+                            Leader Name (Kolom C)
+                        </label>
+                        <input type="text" id="leader-name" value="leaderName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                            Email (Kolom D)
+                        </label>
+                        <input type="text" id="email" value="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="competition-name">
+                            Competition Name (Kolom F)
+                        </label>
+                        <input type="text" id="competition-name" value="competitionName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-center">
+                <button id="process-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 opacity-50 cursor-not-allowed" disabled>
+                    Proses Data
+                </button>
+            </div>
+        </div>
+
+        <div id="preview-section" class="bg-white rounded-lg shadow-md p-6 max-w-5xl mx-auto mb-8 hidden">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800">Preview Data CSV</h2>
+            <div class="mb-6 overflow-auto max-h-96">
+                <table id="csv-table" class="w-full">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="text-left p-2">No Registration</th>
+                            <th class="text-left p-2">No Participant</th>
+                            <th class="text-left p-2">Leader Name</th>
+                            <th class="text-left p-2">Email</th>
+                            <th class="text-left p-2">Competition Name</th>
+                        </tr>
+                    </thead>
+                    <tbody id="csv-table-body">
+                        <!-- Data akan diisi oleh JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="result-section" class="bg-white rounded-lg shadow-md p-6 max-w-5xl mx-auto mt-8 hidden">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800">Preview Data JSON</h2>
+            <div class="mb-6 bg-gray-100 p-4 rounded-lg overflow-auto max-h-96">
+                <pre id="json-preview" class="text-sm"></pre>
+            </div>
+            
+            <div class="flex justify-center">
+                <button id="download-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300">
+                    Unduh File JSON
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const csvFileInput = document.getElementById('csv-file');
+            const dragArea = document.getElementById('drag-area');
+            const processBtn = document.getElementById('process-btn');
+            const previewSection = document.getElementById('preview-section');
+            const resultSection = document.getElementById('result-section');
+            const jsonPreview = document.getElementById('json-preview');
+            const downloadBtn = document.getElementById('download-btn');
+            const csvTableBody = document.getElementById('csv-table-body');
+            
+            let csvData = null;
+            let jsonData = null;
+            
+            // Drag and drop functionality
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dragArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dragArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dragArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                dragArea.classList.add('active');
+            }
+            
+            function unhighlight() {
+                dragArea.classList.remove('active');
+            }
+            
+            dragArea.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length && files[0].type === 'text/csv') {
+                    csvFileInput.files = files;
+                    handleFile(files[0]);
+                } else {
+                    alert('Silakan unggah file CSV yang valid.');
+                }
+            }
+            
+            // File input functionality
+            dragArea.querySelector('button').addEventListener('click', function() {
+                csvFileInput.click();
+            });
+            
+            csvFileInput.addEventListener('change', function() {
+                if (this.files.length) {
+                    handleFile(this.files[0]);
+                }
+            });
+            
+            function handleFile(file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const text = e.target.result;
+                    parseCSV(text);
+                };
+                
+                reader.onerror = function() {
+                    alert('Error membaca file');
+                };
+                
+                reader.readAsText(file);
+            }
+            
+            function parseCSV(text) {
+                try {
+                    // Parse CSV text to array of arrays
+                    const rows = text.split('\n').map(row => {
+                        // Handle quoted fields that may contain commas
+                        const result = [];
+                        let inQuotes = false;
+                        let currentField = '';
+                        
+                        for (let i = 0; i < row.length; i++) {
+                            const char = row[i];
+                            
+                            if (char === '"') {
+                                inQuotes = !inQuotes;
+                            } else if (char === ',' && !inQuotes) {
+                                result.push(currentField);
+                                currentField = '';
+                            } else {
+                                currentField += char;
+                            }
+                        }
+                        
+                        result.push(currentField);
+                        return result;
+                    });
+                    
+                    // Extract headers and data
+                    const headers = rows[0];
+                    const dataRows = rows.slice(1).filter(row => row.length > 1);
+                    
+                    // Map to our desired format
+                    csvData = dataRows.map(row => {
+                        return {
+                            noRegistration: row[0] || '',
+                            noParticipant: row[1] || '',
+                            leaderName: row[2] || '',
+                            email: row[3] || '',
+                            competitionName: row[5] || '' // Kolom F (index 5)
+                        };
+                    });
+                    
+                    // Enable process button
+                    processBtn.disabled = false;
+                    processBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    
+                    // Show preview
+                    showPreview(csvData);
+                    
+                } catch (error) {
+                    console.error('Error processing CSV file:', error);
+                    alert('Terjadi kesalahan saat memproses file. Pastikan format file benar.');
+                }
+            }
+            
+            function showPreview(data) {
+                // Clear previous data
+                csvTableBody.innerHTML = '';
+                
+                // Add new data (limit to 10 rows for preview)
+                const previewData = data.slice(0, 10);
+                
+                previewData.forEach(row => {
+                    const tr = document.createElement('tr');
+                    
+                    tr.innerHTML = `
+                        <td class="p-2">${row.noRegistration}</td>
+                        <td class="p-2">${row.noParticipant}</td>
+                        <td class="p-2">${row.leaderName}</td>
+                        <td class="p-2">${row.email}</td>
+                        <td class="p-2">${row.competitionName}</td>
+                    `;
+                    
+                    csvTableBody.appendChild(tr);
+                });
+                
+                // Show preview section
+                previewSection.classList.remove('hidden');
+            }
+            
+            processBtn.addEventListener('click', function() {
+                if (!csvData) {
+                    alert('Silakan pilih file CSV terlebih dahulu!');
+                    return;
+                }
+                
+                jsonData = csvData;
+                
+                // Menampilkan preview
+                jsonPreview.textContent = JSON.stringify(jsonData, null, 2);
+                resultSection.classList.remove('hidden');
+                
+                // Scroll to result section
+                resultSection.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            downloadBtn.addEventListener('click', function() {
+                if (!jsonData) {
+                    alert('Tidak ada data untuk diunduh');
+                    return;
+                }
+                
+                const jsonString = JSON.stringify(jsonData, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'data_peserta.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        });
+    </script>
+</body>
+</html>

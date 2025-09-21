@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Validasi dari Data JSON</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            width: 100%;
+            max-width: 420px;
+            transition: all 0.3s ease;
+        }
+        .input-field {
+            transition: all 0.3s;
+        }
+        .input-field:focus {
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.5s;
+            z-index: 1000;
+        }
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .shake {
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+            20%, 40%, 60%, 80% { transform: translateX(8px); }
+        }
+        .user-info-card {
+            transition: all 0.3s ease;
+        }
+        .user-info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        .invoice-btn {
+            transition: all 0.3s ease;
+        }
+        .invoice-btn:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50">
+    <!-- Notification -->
+    <div id="notification" class="notification w-80 bg-white rounded-lg shadow-lg border-l-4 border-red-500 flex items-center p-4 hidden">
+        <div class="mr-4 text-red-500">
+            <i class="fas fa-exclamation-circle text-xl"></i>
+        </div>
+        <div>
+            <h3 class="text-sm font-semibold text-gray-800" id="notification-title">Error</h3>
+            <p class="text-xs text-gray-600 mt-1" id="notification-message">Pesan error akan muncul di sini</p>
+        </div>
+        <button class="ml-auto text-gray-400 hover:text-gray-600" onclick="hideNotification()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Login Card -->
+    <div id="loginCard" class="card">
+        <div class="bg-indigo-700 text-white py-6 px-8 text-center">
+            <h1 class="text-2xl font-bold">Cek Data Peserta UPC 2025</h1>
+            <p class="text-indigo-200 mt-2">Masukkan nama lengkap dan email Anda</p>
+        </div>
+        
+        <div class="px-8 py-6">
+            <form id="loginForm" class="space-y-5">
+                <div>
+                    <label for="fullname" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-400"></i>
+                        </div>
+                        <input 
+                            type="text" 
+                            id="fullname" 
+                            class="input-field pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                            placeholder="Masukkan nama lengkap"
+                            autocomplete="off"
+                        >
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Alamat Email</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-envelope text-gray-400"></i>
+                        </div>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            class="input-field pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                            placeholder="Masukkan alamat email"
+                            autocomplete="off"
+                        >
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary w-full text-white py-3 rounded-lg font-semibold">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Masuk
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">Data terupdate pada: 21 September 2025</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Info Section (Initially Hidden) -->
+    <div id="userInfoSection" class="card mt-8 hidden">
+        <div class="bg-indigo-700 text-white py-4 px-8 flex justify-between items-center">
+            <h2 class="text-xl font-bold">Informasi Pengguna</h2>
+            <button id="logoutBtn" class="text-indigo-100 hover:text-white">
+                <i class="fas fa-sign-out-alt mr-1"></i> Logout
+            </button>
+        </div>
+        
+        <div class="px-8 py-6">
+            <div class="user-info-card bg-white border border-gray-200 rounded-xl p-6 mb-6">
+                <div class="flex items-center justify-center mb-5">
+                    <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user-check text-indigo-600 text-3xl"></i>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex justify-between border-b pb-2">
+                        <span class="text-gray-600">No. Registrasi:</span>
+                        <span class="font-semibold" id="info-noRegistration"></span>
+                    </div>
+                    
+                    <div class="flex justify-between border-b pb-2">
+                        <span class="text-gray-600">No. Peserta:</span>
+                        <span class="font-semibold" id="info-noParticipant"></span>
+                    </div>
+                    
+                    <div class="flex justify-between border-b pb-2">
+                        <span class="text-gray-600">Nama Lengkap:</span>
+                        <span class="font-semibold" id="info-leaderName"></span>
+                    </div>
+                    
+                    <div class="flex justify-between border-b pb-2">
+                        <span class="text-gray-600">Email:</span>
+                        <span class="font-semibold" id="info-email"></span>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Kompetisi:</span>
+                        <span class="font-semibold text-right" id="info-competitionName"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <a id="invoiceLink" target="_blank" class="invoice-btn inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                    <i class="fas fa-download mr-2"></i> Download Invoice
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variabel global untuk menyimpan data
+        let userData = [];
+
+        // Fungsi untuk mengambil data dari file JSON
+        async function loadUserData() {
+            try {
+                const response = await fetch('./data.json');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                userData = await response.json();
+                console.log('Data berhasil dimuat:', userData);
+                
+                // Panggil fungsi lain yang membutuhkan data di sini
+                processData();
+                
+            } catch (error) {
+                console.error('Error loading JSON data:', error);
+                // Fallback ke data default jika file tidak ditemukan
+                userData = [
+                    {
+                        "noRegistration": "default1",
+                        "noParticipant": "",
+                        "leaderName": "Default User",
+                        "email": "default@example.com",
+                        "competitionName": "Default Competition"
+                    }
+                ];
+            }
+        }
+
+        // Fungsi yang menggunakan data setelah dimuat
+        function processData() {
+            console.log('Memproses data:', userData);
+            // Lakukan sesuatu dengan userData di sini
+        }
+
+        // Panggil fungsi untuk memuat data
+        loadUserData();
+
+        // DOM Elements
+        const loginForm = document.getElementById('loginForm');
+        const loginCard = document.getElementById('loginCard');
+        const userInfoSection = document.getElementById('userInfoSection');
+        const fullnameInput = document.getElementById('fullname');
+        const emailInput = document.getElementById('email');
+        const notification = document.getElementById('notification');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const invoiceLink = document.getElementById('invoiceLink');
+
+        // Show notification function
+        function showNotification(title, message, type = 'error') {
+            const notifTitle = document.getElementById('notification-title');
+            const notifMessage = document.getElementById('notification-message');
+            
+            // Set border color based on type
+            if (type === 'success') {
+                notification.classList.remove('border-red-500');
+                notification.classList.add('border-green-500');
+                
+                // Change icon for success
+                notification.querySelector('i').className = 'fas fa-check-circle text-xl';
+            } else {
+                notification.classList.remove('border-green-500');
+                notification.classList.add('border-red-500');
+                
+                // Change icon for error
+                notification.querySelector('i').className = 'fas fa-exclamation-circle text-xl';
+            }
+            
+            notifTitle.textContent = title;
+            notifMessage.textContent = message;
+            
+            notification.classList.remove('hidden');
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            // Auto hide after 5 seconds
+            setTimeout(hideNotification, 5000);
+        }
+
+        // Hide notification function
+        function hideNotification() {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 500);
+        }
+
+        // Show user info with data
+        function showUserInfo(user) {
+            document.getElementById('info-noRegistration').textContent = user.noRegistration;
+            document.getElementById('info-noParticipant').textContent = user.noParticipant || '-';
+            document.getElementById('info-leaderName').textContent = user.leaderName;
+            document.getElementById('info-email').textContent = user.email;
+            document.getElementById('info-competitionName').textContent = user.competitionName;
+            
+            // Set invoice link
+            invoiceLink.href = `https://upcunud.com/invoice/${user.noRegistration}`;
+            
+            // Show user info section and hide login card
+            loginCard.classList.add('hidden');
+            userInfoSection.classList.remove('hidden');
+            
+            // Show success notification
+            showNotification('Login Berhasil', `Selamat datang ${user.leaderName}!`, 'success');
+        }
+
+        // Logout function
+        function logout() {
+            // Clear form
+            loginForm.reset();
+            
+            // Show login card and hide user info section
+            userInfoSection.classList.add('hidden');
+            loginCard.classList.remove('hidden');
+            
+            // Show info notification
+            showNotification('Logout Berhasil', 'Anda telah logout dari sistem.', 'success');
+        }
+
+        // Form submission handler
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fullname = fullnameInput.value.trim();
+            const email = emailInput.value.trim();
+            
+            // Basic validation
+            if (!fullname || !email) {
+                showNotification('Data Tidak Lengkap', 'Harap isi nama lengkap dan email.');
+                loginForm.classList.add('shake');
+                setTimeout(() => loginForm.classList.remove('shake'), 500);
+                return;
+            }
+            
+            // Email format validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('Format Email Salah', 'Harap masukkan format email yang valid.');
+                emailInput.focus();
+                loginForm.classList.add('shake');
+                setTimeout(() => loginForm.classList.remove('shake'), 500);
+                return;
+            }
+            
+            // Check if user exists in the data
+            const user = userData.find(u => 
+                u.leaderName.toLowerCase() === fullname.toLowerCase() && 
+                u.email.toLowerCase() === email.toLowerCase()
+            );
+            
+            if (user) {
+                // Login successful
+                showUserInfo(user);
+            } else {
+                // Login failed
+                showNotification('Login Gagal', 'Nama lengkap dan email tidak sesuai dengan data yang terdaftar.');
+                loginForm.classList.add('shake');
+                setTimeout(() => loginForm.classList.remove('shake'), 500);
+            }
+        });
+
+        // Logout button event listener
+        logoutBtn.addEventListener('click', logout);
+
+        // Add input event listeners to remove error state
+        fullnameInput.addEventListener('input', function() {
+            loginForm.classList.remove('shake');
+        });
+        
+        emailInput.addEventListener('input', function() {
+            loginForm.classList.remove('shake');
+        });
+
+        // Demo credentials info
+        setTimeout(() => {
+            showNotification('Info Login', 'Silahkan cek data diri kepesertaan kalian dengan memasukkan nama lengkap serta email', 'success');
+        }, 2000);
+    </script>
+</body>
+</html>
