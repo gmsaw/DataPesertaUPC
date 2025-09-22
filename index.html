@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Validasi dari Data JSON</title>
+    <title>Data Peserta UPC 2025</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -48,6 +48,14 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
         }
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            transition: all 0.3s;
+        }
+        .btn-whatsapp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
         .notification {
             position: fixed;
             top: 20px;
@@ -82,6 +90,33 @@
         .invoice-btn:hover {
             transform: scale(1.05);
         }
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .login-method {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f1f5f9;
+        }
+        .login-method-btn {
+            flex: 1;
+            padding: 8px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .login-method-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
     </style>
 </head>
 <body class="font-sans bg-gray-50">
@@ -103,10 +138,17 @@
     <div id="loginCard" class="card">
         <div class="bg-indigo-700 text-white py-6 px-8 text-center">
             <h1 class="text-2xl font-bold">Cek Data Peserta UPC 2025</h1>
-            <p class="text-indigo-200 mt-2">Masukkan nama lengkap dan email Anda</p>
+            <p class="text-indigo-200 mt-2">Masukkan nama lengkap dan pilih metode login</p>
         </div>
         
         <div class="px-8 py-6">
+            <!-- Login Method Selector -->
+            <div class="login-method">
+                <div class="login-method-btn active" data-method="email">Email</div>
+                <div class="login-method-btn" data-method="nisn">NISN</div>
+                <div class="login-method-btn" data-method="phone">No. Telepon</div>
+            </div>
+            
             <form id="loginForm" class="space-y-5">
                 <div>
                     <label for="fullname" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
@@ -124,7 +166,7 @@
                     </div>
                 </div>
                 
-                <div>
+                <div id="emailField">
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Alamat Email</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -140,13 +182,45 @@
                     </div>
                 </div>
                 
+                <div id="nisnField" class="hidden">
+                    <label for="nisn" class="block text-sm font-medium text-gray-700 mb-1">NISN</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-id-card text-gray-400"></i>
+                        </div>
+                        <input 
+                            type="text" 
+                            id="nisn" 
+                            class="input-field pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                            placeholder="Masukkan NISN"
+                            autocomplete="off"
+                        >
+                    </div>
+                </div>
+                
+                <div id="phoneField" class="hidden">
+                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Nomor Telepon</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-phone text-gray-400"></i>
+                        </div>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            class="input-field pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                            placeholder="Masukkan nomor telepon"
+                            autocomplete="off"
+                        >
+                    </div>
+                </div>
+                
                 <button type="submit" class="btn-primary w-full text-white py-3 rounded-lg font-semibold">
                     <i class="fas fa-sign-in-alt mr-2"></i> Masuk
                 </button>
             </form>
             
             <div class="mt-6 text-center">
-                <p class="text-sm text-gray-600">Data terupdate pada: 21 September 2025</p>
+                <p class="text-sm text-gray-600">Data terupdate pada: 22 September 2025</p>
             </div>
         </div>
     </div>
@@ -189,6 +263,16 @@
                         <span class="font-semibold" id="info-email"></span>
                     </div>
                     
+                    <div class="flex justify-between border-b pb-2">
+                        <span class="text-gray-600">NISN:</span>
+                        <span class="font-semibold" id="info-nisn"></span>
+                    </div>
+                    
+                    <div class="flex justify-between border-b pb-2">
+                        <span class="text-gray-600">No. Telepon:</span>
+                        <span class="font-semibold" id="info-phone"></span>
+                    </div>
+                    
                     <div class="flex justify-between">
                         <span class="text-gray-600">Kompetisi:</span>
                         <span class="font-semibold text-right" id="info-competitionName"></span>
@@ -196,9 +280,13 @@
                 </div>
             </div>
             
-            <div class="text-center">
-                <a id="invoiceLink" target="_blank" class="invoice-btn inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
-                    <i class="fas fa-download mr-2"></i> Download Invoice
+            <div class="action-buttons">
+                <a id="invoiceLink" target="_blank" class="invoice-btn inline-flex items-center justify-center px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                    <i class="fas fa-download mr-2"></i> Invoice
+                </a>
+                
+                <a id="whatsappLink" target="_blank" class="btn-whatsapp inline-flex items-center justify-center px-4 py-3 text-white rounded-lg font-semibold">
+                    <i class="fab fa-whatsapp mr-2 text-xl"></i> Grup WA
                 </a>
             </div>
         </div>
@@ -207,6 +295,7 @@
     <script>
         // Variabel global untuk menyimpan data
         let userData = [];
+        let currentLoginMethod = 'email'; // Default login method
 
         // Fungsi untuk mengambil data dari file JSON
         async function loadUserData() {
@@ -220,28 +309,32 @@
                 userData = await response.json();
                 console.log('Data berhasil dimuat:', userData);
                 
-                // Panggil fungsi lain yang membutuhkan data di sini
-                processData();
-                
             } catch (error) {
                 console.error('Error loading JSON data:', error);
                 // Fallback ke data default jika file tidak ditemukan
                 userData = [
                     {
-                        "noRegistration": "default1",
-                        "noParticipant": "",
-                        "leaderName": "Default User",
-                        "email": "default@example.com",
-                        "competitionName": "Default Competition"
+                        "noRegistration": "REG001",
+                        "noParticipant": "P001",
+                        "leaderName": "Ahmad Rizki",
+                        "email": "ahmad@example.com",
+                        "nisn": "1234567890",
+                        "phone": "081234567890",
+                        "competitionName": "Kompetisi Fisika SMP",
+                        "whatsappGroup": "https://chat.whatsapp.com/example"
+                    },
+                    {
+                        "noRegistration": "REG002",
+                        "noParticipant": "P002",
+                        "leaderName": "Siti Rahayu",
+                        "email": "siti@example.com",
+                        "nisn": "0987654321",
+                        "phone": "087654321098",
+                        "competitionName": "Kompetisi Matematika SMA",
+                        "whatsappGroup": "https://chat.whatsapp.com/example"
                     }
                 ];
             }
-        }
-
-        // Fungsi yang menggunakan data setelah dimuat
-        function processData() {
-            console.log('Memproses data:', userData);
-            // Lakukan sesuatu dengan userData di sini
         }
 
         // Panggil fungsi untuk memuat data
@@ -253,9 +346,46 @@
         const userInfoSection = document.getElementById('userInfoSection');
         const fullnameInput = document.getElementById('fullname');
         const emailInput = document.getElementById('email');
+        const nisnInput = document.getElementById('nisn');
+        const phoneInput = document.getElementById('phone');
         const notification = document.getElementById('notification');
         const logoutBtn = document.getElementById('logoutBtn');
         const invoiceLink = document.getElementById('invoiceLink');
+        const whatsappLink = document.getElementById('whatsappLink');
+        const loginMethodBtns = document.querySelectorAll('.login-method-btn');
+        const emailField = document.getElementById('emailField');
+        const nisnField = document.getElementById('nisnField');
+        const phoneField = document.getElementById('phoneField');
+
+        // Hanya satu grup WhatsApp untuk semua peserta
+        const whatsappGroupURL = "https://chat.whatsapp.com/CvFiD9x5K9I1bFXwcDqMnL?mode=r_t";
+
+        // Login method selection
+        loginMethodBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                loginMethodBtns.forEach(b => b.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Set current login method
+                currentLoginMethod = this.getAttribute('data-method');
+                
+                // Show/hide appropriate input field
+                emailField.classList.add('hidden');
+                nisnField.classList.add('hidden');
+                phoneField.classList.add('hidden');
+                
+                if (currentLoginMethod === 'email') {
+                    emailField.classList.remove('hidden');
+                } else if (currentLoginMethod === 'nisn') {
+                    nisnField.classList.remove('hidden');
+                } else if (currentLoginMethod === 'phone') {
+                    phoneField.classList.remove('hidden');
+                }
+            });
+        });
 
         // Show notification function
         function showNotification(title, message, type = 'error') {
@@ -268,13 +398,13 @@
                 notification.classList.add('border-green-500');
                 
                 // Change icon for success
-                notification.querySelector('i').className = 'fas fa-check-circle text-xl';
+                notification.querySelector('i').className = 'fas fa-check-circle text-xl text-green-500';
             } else {
                 notification.classList.remove('border-green-500');
                 notification.classList.add('border-red-500');
                 
                 // Change icon for error
-                notification.querySelector('i').className = 'fas fa-exclamation-circle text-xl';
+                notification.querySelector('i').className = 'fas fa-exclamation-circle text-xl text-red-500';
             }
             
             notifTitle.textContent = title;
@@ -303,10 +433,15 @@
             document.getElementById('info-noParticipant').textContent = user.noParticipant || '-';
             document.getElementById('info-leaderName').textContent = user.leaderName;
             document.getElementById('info-email').textContent = user.email;
+            document.getElementById('info-nisn').textContent = user.nisn || '-';
+            document.getElementById('info-phone').textContent = user.phone || '-';
             document.getElementById('info-competitionName').textContent = user.competitionName;
             
             // Set invoice link
             invoiceLink.href = `https://upcunud.com/invoice/${user.noRegistration}`;
+            
+            // Set WhatsApp group link (sama untuk semua peserta)
+            whatsappLink.href = whatsappGroupURL;
             
             // Show user info section and hide login card
             loginCard.classList.add('hidden');
@@ -321,6 +456,14 @@
             // Clear form
             loginForm.reset();
             
+            // Reset to default login method
+            loginMethodBtns.forEach(btn => btn.classList.remove('active'));
+            document.querySelector('[data-method="email"]').classList.add('active');
+            currentLoginMethod = 'email';
+            emailField.classList.remove('hidden');
+            nisnField.classList.add('hidden');
+            phoneField.classList.add('hidden');
+            
             // Show login card and hide user info section
             userInfoSection.classList.add('hidden');
             loginCard.classList.remove('hidden');
@@ -334,38 +477,85 @@
             e.preventDefault();
             
             const fullname = fullnameInput.value.trim();
-            const email = emailInput.value.trim();
+            let identifier;
             
-            // Basic validation
-            if (!fullname || !email) {
-                showNotification('Data Tidak Lengkap', 'Harap isi nama lengkap dan email.');
-                loginForm.classList.add('shake');
-                setTimeout(() => loginForm.classList.remove('shake'), 500);
-                return;
+            // Get identifier based on selected method
+            if (currentLoginMethod === 'email') {
+                identifier = emailInput.value.trim();
+                
+                // Email format validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(identifier)) {
+                    showNotification('Format Email Salah', 'Harap masukkan format email yang valid.');
+                    emailInput.focus();
+                    loginForm.classList.add('shake');
+                    setTimeout(() => loginForm.classList.remove('shake'), 500);
+                    return;
+                }
+            } else if (currentLoginMethod === 'nisn') {
+                identifier = nisnInput.value.trim();
+                
+                // NISN validation (10 digits)
+                if (!/^\d{10}$/.test(identifier)) {
+                    showNotification('Format NISN Salah', 'NISN harus terdiri dari 10 digit angka.');
+                    nisnInput.focus();
+                    loginForm.classList.add('shake');
+                    setTimeout(() => loginForm.classList.remove('shake'), 500);
+                    return;
+                }
+            } else if (currentLoginMethod === 'phone') {
+                identifier = phoneInput.value.trim();
+                
+                // Phone number validation (minimal 10 digits, bisa diawali + atau 0)
+                if (!/^[\+]?[0-9]{10,13}$/.test(identifier)) {
+                    showNotification('Format Nomor Telepon Salah', 'Harap masukkan nomor telepon yang valid.');
+                    phoneInput.focus();
+                    loginForm.classList.add('shake');
+                    setTimeout(() => loginForm.classList.remove('shake'), 500);
+                    return;
+                }
             }
             
-            // Email format validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                showNotification('Format Email Salah', 'Harap masukkan format email yang valid.');
-                emailInput.focus();
+            // Basic validation
+            if (!fullname || !identifier) {
+                showNotification('Data Tidak Lengkap', 'Harap isi semua field yang diperlukan.');
                 loginForm.classList.add('shake');
                 setTimeout(() => loginForm.classList.remove('shake'), 500);
                 return;
             }
             
             // Check if user exists in the data
-            const user = userData.find(u => 
-                u.leaderName.toLowerCase() === fullname.toLowerCase() && 
-                u.email.toLowerCase() === email.toLowerCase()
-            );
+            let user;
+            
+            if (currentLoginMethod === 'email') {
+                user = userData.find(u => 
+                    u.leaderName.toLowerCase() === fullname.toLowerCase() && 
+                    u.email.toLowerCase() === identifier.toLowerCase()
+                );
+            } else if (currentLoginMethod === 'nisn') {
+                user = userData.find(u => 
+                    u.leaderName.toLowerCase() === fullname.toLowerCase() && 
+                    u.nisn === identifier
+                );
+            } else if (currentLoginMethod === 'phone') {
+                // Normalize phone number for comparison (remove + and leading 0)
+                const normalizedIdentifier = identifier.replace(/^\+/, '').replace(/^0/, '');
+                
+                user = userData.find(u => {
+                    if (!u.phone) return false;
+                    
+                    const normalizedUserPhone = u.phone.replace(/^\+/, '').replace(/^0/, '');
+                    return u.leaderName.toLowerCase() === fullname.toLowerCase() && 
+                           normalizedUserPhone === normalizedIdentifier;
+                });
+            }
             
             if (user) {
                 // Login successful
                 showUserInfo(user);
             } else {
                 // Login failed
-                showNotification('Login Gagal', 'Nama lengkap dan email tidak sesuai dengan data yang terdaftar.');
+                showNotification('Login Gagal', 'Data tidak sesuai dengan data yang terdaftar.');
                 loginForm.classList.add('shake');
                 setTimeout(() => loginForm.classList.remove('shake'), 500);
             }
@@ -382,10 +572,18 @@
         emailInput.addEventListener('input', function() {
             loginForm.classList.remove('shake');
         });
+        
+        nisnInput.addEventListener('input', function() {
+            loginForm.classList.remove('shake');
+        });
+        
+        phoneInput.addEventListener('input', function() {
+            loginForm.classList.remove('shake');
+        });
 
         // Demo credentials info
         setTimeout(() => {
-            showNotification('Info Login', 'Silahkan cek data diri kepesertaan kalian dengan memasukkan nama lengkap serta email', 'success');
+            showNotification('Info Login', 'Gunakan nama lengkap dan salah satu metode login (email, NISN, atau nomor telepon)', 'success');
         }, 2000);
     </script>
 </body>

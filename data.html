@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Konversi CSV ke JSON</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .drag-area {
             border: 2px dashed #3b82f6;
@@ -31,6 +32,15 @@
         #csv-table tr:nth-child(even) {
             background-color: #f3f4f6;
         }
+        .json-key {
+            color: #881391;
+        }
+        .json-string {
+            color: #c41a16;
+        }
+        .json-number {
+            color: #1c00cf;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -41,7 +51,7 @@
             <div class="mb-6">
                 <h2 class="text-xl font-semibold mb-3 text-gray-800">Unggah File CSV</h2>
                 <div class="drag-area" id="drag-area">
-                    <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                    <div class="icon text-4xl text-blue-500 mb-2"><i class="fas fa-cloud-upload-alt"></i></div>
                     <p class="text-gray-600 mb-4">Seret dan lepas file CSV di sini atau</p>
                     <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300">
                         Pilih File
@@ -84,6 +94,18 @@
                         </label>
                         <input type="text" id="competition-name" value="competitionName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
                     </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="student-id">
+                            Student ID / NISN (Kolom K)
+                        </label>
+                        <input type="text" id="student-id" value="nisn" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="leader-phone">
+                            Leader Phone (Kolom N)
+                        </label>
+                        <input type="text" id="leader-phone" value="phone" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
+                    </div>
                 </div>
             </div>
 
@@ -105,6 +127,8 @@
                             <th class="text-left p-2">Leader Name</th>
                             <th class="text-left p-2">Email</th>
                             <th class="text-left p-2">Competition Name</th>
+                            <th class="text-left p-2">NISN</th>
+                            <th class="text-left p-2">Phone</th>
                         </tr>
                     </thead>
                     <tbody id="csv-table-body">
@@ -174,7 +198,7 @@
                 const dt = e.dataTransfer;
                 const files = dt.files;
                 
-                if (files.length && files[0].type === 'text/csv') {
+                if (files.length && (files[0].type === 'text/csv' || files[0].name.endsWith('.csv'))) {
                     csvFileInput.files = files;
                     handleFile(files[0]);
                 } else {
@@ -245,7 +269,9 @@
                             noParticipant: row[1] || '',
                             leaderName: row[2] || '',
                             email: row[3] || '',
-                            competitionName: row[5] || '' // Kolom F (index 5)
+                            competitionName: row[5] || '', // Kolom F (index 5)
+                            nisn: row[10] || '', // Kolom K (index 10)
+                            phone: row[13] || '' // Kolom N (index 13)
                         };
                     });
                     
@@ -278,6 +304,8 @@
                         <td class="p-2">${row.leaderName}</td>
                         <td class="p-2">${row.email}</td>
                         <td class="p-2">${row.competitionName}</td>
+                        <td class="p-2">${row.nisn}</td>
+                        <td class="p-2">${row.phone}</td>
                     `;
                     
                     csvTableBody.appendChild(tr);
@@ -285,6 +313,30 @@
                 
                 // Show preview section
                 previewSection.classList.remove('hidden');
+            }
+            
+            function syntaxHighlight(json) {
+                if (typeof json != 'string') {
+                    json = JSON.stringify(json, null, 2);
+                }
+                
+                json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                
+                return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                    let cls = 'json-number';
+                    if (/^"/.test(match)) {
+                        if (/:$/.test(match)) {
+                            cls = 'json-key';
+                        } else {
+                            cls = 'json-string';
+                        }
+                    } else if (/true|false/.test(match)) {
+                        cls = 'json-boolean';
+                    } else if (/null/.test(match)) {
+                        cls = 'json-null';
+                    }
+                    return '<span class="' + cls + '">' + match + '</span>';
+                });
             }
             
             processBtn.addEventListener('click', function() {
@@ -295,8 +347,8 @@
                 
                 jsonData = csvData;
                 
-                // Menampilkan preview
-                jsonPreview.textContent = JSON.stringify(jsonData, null, 2);
+                // Menampilkan preview dengan syntax highlighting
+                jsonPreview.innerHTML = syntaxHighlight(jsonData);
                 resultSection.classList.remove('hidden');
                 
                 // Scroll to result section
