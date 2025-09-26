@@ -433,7 +433,7 @@
   },
   {
     "noRegistration": "15b83r11kq",
-    "noParticipant": "",
+    "noParticipant": "FSMA-081",
     "leaderName": "AZZALIA ALONSRI",
     "email": "lincemagriasti@fis.unp.ac.id",
     "competitionName": "Kompetisi Fisika SMA",
@@ -1027,7 +1027,7 @@
   },
   {
     "noRegistration": "ac7a9ap7tf",
-    "noParticipant": "",
+    "noParticipant": "FSMA-082",
     "leaderName": "Ida Ayu Shiila Devi",
     "email": "alacylia@gmail.com",
     "competitionName": "Kompetisi Fisika SMA",
@@ -1936,7 +1936,7 @@
   },
   {
     "noRegistration": "2y9b322s2n",
-    "noParticipant": "",
+    "noParticipant": "FAST-065",
     "leaderName": "Dhani Putra Yanutama",
     "email": "dhaniyanutama19@gmail.com",
     "competitionName": "Kompetisi Astronomi",
@@ -3331,7 +3331,7 @@
   },
   {
     "noRegistration": "f0k79b1qid",
-    "noParticipant": "",
+    "noParticipant": "FAST-064",
     "leaderName": "Wigar Niscala Ghiyats Sambas",
     "email": "wigar.sambas@gmail.com",
     "competitionName": "Kompetisi Astronomi",
@@ -3346,5 +3346,32 @@
     "competitionName": "Kompetisi Sains SD",
     "nisn": "0137309729",
     "phone": "082340215343"
+  },
+  {
+    "noRegistration": "6xfnkz8kx5",
+    "noParticipant": "",
+    "leaderName": "Raisya Zhafira",
+    "email": "raisyazhafira642@gmail.com",
+    "competitionName": "Kompetisi Astronomi",
+    "nisn": "0092671920",
+    "phone": " 082287960338"
+  },
+  {
+    "noRegistration": "3u428793d0",
+    "noParticipant": "FAST-066",
+    "leaderName": "Jupiter Arshavino Raditya Mustofa",
+    "email": "jupiterarshavino123@gmail.com",
+    "competitionName": "Kompetisi Astronomi",
+    "nisn": "0105283265",
+    "phone": "081259765577 "
+  },
+  {
+    "noRegistration": "efi82rvcw8",
+    "noParticipant": "FBMN-066",
+    "leaderName": "I Putu Mahesa Rangga Sudibia ",
+    "email": "mahesarangga2828@gmail.com",
+    "competitionName": "Kompetisi Kebumian",
+    "nisn": "0102396072",
+    "phone": "081913927094"
   }
 ]
